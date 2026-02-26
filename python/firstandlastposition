@@ -1,0 +1,23 @@
+class Solution:
+    def searchRange(self, nums: list[int], target: int) -> list[int]:
+        def findBound(isFirst: bool) -> int:
+            n = len(nums)
+            begin, end = 0, n - 1
+            bound = -1
+            
+            while begin <= end:
+                mid = (begin + end) // 2
+                
+                if nums[mid] == target:
+                    bound = mid
+                    if isFirst:
+                        end = mid - 1
+                    else:
+                        begin = mid + 1
+                elif nums[mid] < target:
+                    begin = mid + 1
+                else:
+                    end = mid - 1
+            return bound
+        
+        return [findBound(True), findBound(False)]
