@@ -1,0 +1,27 @@
+import java.util.*;
+
+class Solution {
+    private int postIdx;
+    private Map<Integer, Integer> map;
+
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        postIdx = postorder.length - 1;
+        map = new HashMap<>();
+        for (int i = 0; i < inorder.length; i++) {
+            map.put(inorder[i], i);
+        }
+        return solve(postorder, 0, inorder.length - 1);
+    }
+
+    private TreeNode solve(int[] postorder, int left, int right) {
+        if (left > right) return null;
+
+        int val = postorder[postIdx--];
+        TreeNode root = new TreeNode(val);
+
+        root.right = solve(postorder, map.get(val) + 1, right);
+        root.left = solve(postorder, left, map.get(val) - 1);
+
+        return root;
+    }
+}
