@@ -1,0 +1,38 @@
+var countRangeSum = function(nums, lower, upper) {
+    let prefixSums = new Array(nums.length + 1).fill(0);
+    for (let i = 0; i < nums.length; i++) {
+        prefixSums[i + 1] = prefixSums[i] + nums[i];
+    }
+    return countWhileSorting(prefixSums, 0, prefixSums.length - 1, lower, upper);
+};
+
+function countWhileSorting(sums, start, end, lower, upper) {
+    if (end <= start) return 0;
+    
+    let mid = Math.floor((start + end) / 2);
+    let count = countWhileSorting(sums, start, mid, lower, upper) + 
+                countWhileSorting(sums, mid + 1, end, lower, upper);
+    
+    let j = mid + 1, k = mid + 1, t = mid + 1;
+    let cache = new Array(end - start + 1);
+    let r = 0;
+
+    for (let i = start; i <= mid; i++, r++) {
+        while (k <= end && sums[k] - sums[i] < lower) k++;
+        while (j <= end && sums[j] - sums[i] <= upper) j++;
+        count += j - k;
+
+        while (t <= end && sums[t] < sums[i]) {
+            cache[r++] = sums[t++];
+        }
+        cache[r] = sums[i];
+    }
+
+    while (t <= end) cache[r++] = sums[t++];
+    
+    for (let i = 0; i < cache.length; i++) {
+        sums[start + i] = cache[i];
+    }
+
+    return count;
+}
