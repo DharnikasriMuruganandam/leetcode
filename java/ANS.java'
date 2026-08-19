@@ -1,0 +1,30 @@
+import java.util.Arrays;
+
+class Solution {
+    public int maximumANDSum(int[] nums, int numSlots) {
+        int[] dp = new int[1 << (2 * numSlots)];
+        Arrays.fill(dp, -1);
+        return helper(0, 0, nums, numSlots, dp);
+    }
+
+    private int helper(int numIdx, int mask, int[] nums, int numSlots, int[] dp) {
+        if (numIdx == nums.length) {
+            return 0;
+        }
+        if (dp[mask] != -1) {
+            return dp[mask];
+        }
+
+        int maxSum = 0;
+        for (int slotIdx = 0; slotIdx < 2 * numSlots; slotIdx++) {
+            if ((mask & (1 << slotIdx)) == 0) {
+                int slotNum = (slotIdx / 2) + 1;
+                int currentAnd = nums[numIdx] & slotNum;
+                int currentSum = currentAnd + helper(numIdx + 1, mask | (1 << slotIdx), nums, numSlots, dp);
+                maxSum = Math.max(maxSum, currentSum);
+            }
+        }
+
+        return dp[mask] = maxSum;
+    }
+}
